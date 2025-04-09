@@ -13,7 +13,7 @@ import showtimeRouter from './routes/showtime.js';
 import client from './config/redis.js';
 import cookieParser from 'cookie-parser';
 import seatRouter from './routes/seat.js';
-
+import bookingRouter from './routes/booking.js';
 
 dotenv.config();
 
@@ -46,6 +46,7 @@ app.use("/theatre", theatreRouter);
 app.use("/screen", screenRouter);
 app.use("/showtime", showtimeRouter);
 app.use("/seat", seatRouter);
+app.use("/booking", bookingRouter);
 
 app.get("/", async (req, res) => {
     await client.set("message", "Hello from Redis!");

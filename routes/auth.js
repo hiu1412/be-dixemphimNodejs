@@ -1,7 +1,9 @@
 import express from 'express';
 import { register, login, logout, refreshToken, verifyPasswordToken,resetUserPassword,authenticateEmailCode } from '../controllers/AuthController.js';
 import authMiddleware from '../middleware/authMiddleware.js';
+
 const authRouter = express.Router();
+
 
 authRouter.post("/register", register);{
 try {
@@ -17,6 +19,5 @@ authRouter.post("/refresh-token", refreshToken);
 authRouter.post("/verify-reset-password-token/:passwordToken", verifyPasswordToken);
 authRouter.post("/reset-password/:token", resetUserPassword);
 authRouter.post("/verify-email-code", authenticateEmailCode);
-
 
 export default authRouter;
