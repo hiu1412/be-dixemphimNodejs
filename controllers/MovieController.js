@@ -1,4 +1,4 @@
-import { createMovie, getAllMovies, getMovie, updateMovie, deleteMovie } from '../services/movieService.js';
+import { getNewestMovies, createMovie, getAllMovies, getMovie, updateMovie, deleteMovie } from '../services/movieService.js';
 import {uploadFileToS3} from '../services/uploadService.js';
 // Tạo một movie mới
 const create = async (req, res) => {
@@ -17,18 +17,27 @@ const create = async (req, res) => {
     }
 };
 
-// Lấy danh sách tất cả các movie
 const list = async (req, res) => {
     try {
-        const page = parseInt(req.query.page) || 1; // Lấy tham số page từ query
-        const limit = parseInt(req.query.limit) || 25; // Lấy tham số limit từ query
-        const movies = await getAllMovies(page, limit); // Gọi service với tham số phân trang
-        res.status(200).json({ success: true, movies });
+        const movies = await getAllMovies(); // Gọi hàm lấy danh sách phim
+        
+        res.status(200).json({
+            success: true,
+            data: movies, // Trả về danh sách phim
+        });
     } catch (error) {
         res.status(500).json({ success: false, message: error.message });
     }
 };
 
+const getNewest = async (req, res) => {
+    try {
+        const movies = await getNewestMovies(); // Call service to get newest movies
+        res.status(200).json({ success: true, movies });
+    } catch (error) {
+        res.status(500).json({ success: false, message: error.message });
+    }
+};
 // Lấy thông tin movie theo ID
 const getById = async (req, res) => {
     try {
@@ -71,4 +80,4 @@ const remove = async (req, res) => {
     }
 };
 
-export { create, list, getById, update, remove };
+export { create, list, getById, update, remove,getNewest };

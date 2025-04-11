@@ -57,6 +57,7 @@ const loginUser = async (email, password) => {
     };
     await client.hSet(sessionKey, sessionData);
     await client.expire(sessionKey, 60 * 60 * 24 * 30); 
+    
 
     return { user, accessToken, refreshToken, sessionKey };
 }
@@ -64,6 +65,7 @@ const loginUser = async (email, password) => {
 //refresh token
 const refreshAuthToken = async (refreshToken) => {
     try {
+        console.log("refreshToken", refreshToken);
         const decoded = jwt.verify(refreshToken, env.JWT_SETTINGS.REFRESH_SECRET);
         if (!decoded) throw new Error("Refresh token khong hop le");
 
@@ -72,7 +74,7 @@ const refreshAuthToken = async (refreshToken) => {
             const storedToken = await client.hGet(key, 'refreshToken');
             return storedToken === refreshToken;
         });
-
+`       `
         if (!sessionKey) throw new Error("Phiên đăng nhập không hợp lệ");
 
         const { accessToken } = createToken(decoded.userId, decoded.role, decoded.email, decoded.username);

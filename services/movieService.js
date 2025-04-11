@@ -12,19 +12,26 @@ const createMovie = async (data) =>{
 }
 
 //get list all
-const getAllMovies = async (page = 1, limit = 25) => {
+const getAllMovies = async () => {
     try {
-        const movies = await Movie.find()
-            .sort({ createdAt: -1 }) // Sắp xếp theo createdAt mới nhất
-            .skip((page - 1) * limit) // Bỏ qua các bản ghi trước đó
-            .limit(limit) // Giới hạn số lượng bản ghi trả về
-            .populate('showtime');
-        return movies;
+        const movies = await Movie.find() // Lấy danh sách phim
+            .populate('showtime'); // Nếu bạn muốn lấy thông tin showtime, giữ lại dòng này
+        return movies; // Trả về danh sách phim
     } catch (error) {
-        throw new Error("Lỗi khi lấy danh sách phim: " + error.message);
+        throw new Error("Error retrieving movie list: " + error.message);
     }
 };
 
+//newmovie 
+const getNewestMovies = async () => {
+    try {
+        const movies = await Movie.find() // Assuming you want movies from the year 2025
+            .sort({ createdAt: -1 }); // Sort by createdAt descending
+        return movies;
+    } catch (error) {
+        throw new Error("Error retrieving newest movies: " + error.message);
+    }
+};
 
 //get id
 const getMovie = async(id)=>{
@@ -62,7 +69,7 @@ const deleteMovie = async(id)=>{
     }
 };
 
-export { createMovie, getAllMovies, getMovie, updateMovie, deleteMovie };
+export { createMovie, getAllMovies, getMovie, updateMovie, deleteMovie, getNewestMovies };
 
 
 
