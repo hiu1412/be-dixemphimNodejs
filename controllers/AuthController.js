@@ -15,35 +15,40 @@ const register = async (req, res) => {
 
 const login = async (req, res) => {
     const { email, password } = req.body;
-  
+
     try {
-      const { user, accessToken, refreshToken, sessionKey } = await loginUser(email, password);
-  
-      // Set the session_id cookie (vẫn giữ nguyên)
-      res.cookie("session_id", sessionKey, {
-        httpOnly: false,
-        secure: process.env.NODE_ENV === 'production',
-        sameSite: 'Lax',
-        maxAge: 60 * 60 * 24 * 30 * 1000, // Cookie expiration (30 days)
-      });
-  
-      // Trả về phản hồi theo cấu trúc AuthResponse mong đợi ở frontend
-      return res.json({
-        status: "success",
+        const { user, accessToken, refreshToken, sessionKey } = await loginUser(email, password);
+
+        // Set the session_id cookie
+        res.cookie("session_id", sessionKey, {
+            httpOnly: true,
+            secure: process.env.NODE_ENV === "production",
+            sameSite: "Lax",
+            maxAge: 60 * 60 * 24 * 30 * 1000, // Cookie expiration (30 days)
+        });
+        const data = { status: "success",
         message: "Đăng nhập thành công",
         data: {
-          user: { email: user.email, username: user.username },
-          accessToken: accessToken,
-        },
-      });
+            user: {
+                id: user._id,
+                username: user.username,
+                email: user.email,
+                role: user.role,
+            },
+            accessToken,
+            refreshToken,
+        },}
+        console.log(data);
+        // Trả về phản hồi theo cấu trúc AuthResponse
+        return res.json(data);
     } catch (error) {
-      return res.status(500).json({
-        status: "error",
-        message: "Đăng nhập không thành công",
-        error: error.message,
-      });
+        return res.status(500).json({
+            status: "error",
+            message: "Đăng nhập không thành công",
+            data: null,
+        });
     }
-  };
+};
 
 //cap lai refresh token
 const refreshToken = async (req, res) => {
@@ -120,18 +125,46 @@ const list = async (req, res) => {
     }
 }
 
-//user id
+
 const getUser = async (req, res) => {
     try {
-        const user = await getUserById(req.params.userId); 
-        if (!user) {
-            return res.status(404).json({ success: false, message: "Người dùng không tồn tại" });
+        // Kiểm tra req.user
+        if (!req.user || !req.user.userId) {
+            return res.status(401).json({
+                status: "error",
+                message: "Người dùng chưa được xác thực",
+                data: null,
+            });
         }
-        return res.status(200).json({ success: true, user });
+
+        // Lấy userId từ middleware (req.user)
+        const userId = req.user.userId;
+
+        // Gọi service để lấy thông tin người dùng từ database
+        const user = await getUserById(userId);
+        if (!user) {
+            return res.status(404).json({
+                status: "error",
+                message: "Người dùng không tồn tại",
+                data: null,
+            });
+        }
+
+        // Trả về thông tin người dùng
+        return res.status(200).json({
+            status: "success",
+            message: "Lấy thông tin người dùng thành công",
+            data: { user },
+        });
     } catch (error) {
-        return res.status(500).json({ success: false, message: "Lỗi khi lấy thông tin người dùng", error: error.message });
+        console.error("Lỗi khi lấy thông tin người dùng:", error.message);
+        return res.status(500).json({
+            status: "error",
+            message: "Lỗi khi lấy thông tin người dùng",
+            data: null,
+        });
     }
-}
+};
 
 // Xóa người dùng
 const remove = async (req, res) => {

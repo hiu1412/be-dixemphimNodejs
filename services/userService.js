@@ -70,16 +70,19 @@ const updateUser = async (userId, editedName, editedEmail, editedRole, editedAct
 
 
 //getUserById
-const getUserById = async (usedId) => {
+const getUserById = async (userId) => {
     try {
-        const user = await User.findById(usedId);
+        // Tìm người dùng trong database
+        const user = await User.findById(userId).select('-password'); // Không trả về mật khẩu
+        if (!user) {
+            throw new Error("Người dùng không tồn tại");
+        }
         return user;
-    } catch
-    (error) {
-        throw new Error("Lỗi khi lấy thông tin người dùng: " + error.message);
+    } catch (error) {
+        console.error("Lỗi khi lấy thông tin người dùng từ database:", error.message);
+        throw new Error("Lỗi khi lấy thông tin người dùng");
     }
-}
-
+};
 
 
 export { removeUser, changeUserPassword, listUser, updateUser, getUserById };

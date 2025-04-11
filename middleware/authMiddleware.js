@@ -23,6 +23,8 @@ const authMiddleware = async(req,res, next)=>{
 
         const decoded = jwt.verify(token, env.JWT_SETTINGS.ACCESS_SECRET);
         req.user = decoded;
+        console.log("Decoded token:", decoded); // Ghi lại thông tin đã giải mã
+        console.log("req.user:", req.user); // Ghi lại thông tin người dùng
         next();
     }catch(error)
     {

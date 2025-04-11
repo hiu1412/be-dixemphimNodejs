@@ -13,7 +13,8 @@ import showtimeRouter from './routes/showtime.js';
 import client from './config/redis.js';
 import cookieParser from 'cookie-parser';
 import seatRouter from './routes/seat.js';
-import bookingRouter from './routes/booking.js';
+import bookingRouter from './routes/booking.js'; 
+import paymentRouter from './routes/payment.js';
 
 dotenv.config();
 
@@ -25,9 +26,10 @@ app.use(cookieParser())
 
 app.use(express.json());
 app.use(cors({
-    origin: 'http://localhost:3000', 
-    credentials: true, 
+    origin: ['http://localhost:3000', 'http://localhost:5173'], 
+    credentials: true,
 }));
+
 
 //connect DB
 connectDB();
@@ -47,6 +49,7 @@ app.use("/screen", screenRouter);
 app.use("/showtime", showtimeRouter);
 app.use("/seat", seatRouter);
 app.use("/booking", bookingRouter);
+app.use('/payment', paymentRouter);
 
 app.get("/", async (req, res) => {
     await client.set("message", "Hello from Redis!");
