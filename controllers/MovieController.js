@@ -10,7 +10,9 @@ const create = async (req, res) => {
             posterUrl = await uploadFileToS3(req.file);
         }
         // Gọi service để tạo movie
+        
         const movie = await createMovie({ ...req.body, poster: posterUrl });
+        console.log(movie);
         res.status(201).json({ success: true, movie, message: "Tạo movie thành công" });
     } catch (error) {
         res.status(500).json({ success: false, message: error.message });

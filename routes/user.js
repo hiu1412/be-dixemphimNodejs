@@ -6,8 +6,8 @@ import authMiddleware from '../middleware/authMiddleware.js';
 
 const userRouter = express.Router();
 
-userRouter.get("/",authMiddleware, adminMiddle ,list); 
+userRouter.get("/",authMiddleware,list); //lát thêm lại adminMiddle cho tất cảcả
 userRouter.put("/:userId", authMiddleware,update);
 userRouter.delete("/:userId",authMiddleware, remove);
-userRouter.put("/change-password/:id" ,authMiddleware, changePassword);
+userRouter.put("/change-password/:userId" , authMiddleware, changePassword);
 export default userRouter;

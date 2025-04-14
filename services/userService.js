@@ -17,23 +17,37 @@ const removeUser = async (userId) => {
 
 // Đổi mật khẩu người dùng
 const changeUserPassword = async (userId, currentPassword, newPassword) => {
-    // Tìm người dùng theo ID
-    const user = await User.findById(userId);
-    if (!user) throw new Error("Người dùng không tồn tại");
+    // Tìm user theo ID
+    try {
+        // Tìm user theo ID
+        const user = await User.findOne(userId); // Giữ nguyên findById trước
 
-    // Kiểm tra mật khẩu hiện tại
-    const isMatch = await bcrypt.compare(currentPassword, user.password);
-    if (!isMatch) throw new Error("Mật khẩu hiện tại không chính xác");
+        if (!user) {
+            throw new Error("Người dùng không tồn tại");
+        }
 
-    // Kiểm tra độ dài mật khẩu mới
-    if (newPassword.length < 6) throw new Error("Mật khẩu mới phải dài hơn 6 ký tự");
+        // Verify mật khẩu hiện tại
+        const isMatch = await bcrypt.compare(currentPassword, user.password);
+        if (!isMatch) {
+            throw new Error("Mật khẩu hiện tại không chính xác");
+        }
 
-    // Cập nhật mật khẩu mới
-    const salt = await bcrypt.genSalt(10);
-    const hashedNewPassword = await bcrypt.hash(newPassword, salt);
-    user.password = hashedNewPassword;
-    user.updateAt = Date.now();
-    await user.save();
+        // Validate mật khẩu mới
+        if (!newPassword || newPassword.length < 6) {
+            throw new Error("Mật khẩu mới phải dài hơn 6 ký tự");
+        }
+        
+
+        // Hash và lưu mật khẩu mới
+        const salt = await bcrypt.genSalt(10);
+        const hashedNewPassword = await bcrypt.hash(newPassword, salt);
+        user.password = hashedNewPassword;
+        user.updateAt = Date.now();
+        await user.save();
+    } catch (error) {
+        console.error("Lỗi đổi mật khẩu:", error);
+        throw error;
+    }
 };
 
 

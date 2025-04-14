@@ -1,9 +1,8 @@
 import mongoose from 'mongoose';
 
 const ticketSchema = new mongoose.Schema({
-    _id: mongoose.Schema.Types.ObjectId,
-    bookingId: { type: mongoose.Schema.Types.ObjectId, required: true },
-    seatId: { type: mongoose.Schema.Types.ObjectId, required: true },
+    booking: { type: mongoose.Schema.Types.ObjectId, required: true },
+    seat: { type: mongoose.Schema.Types.ObjectId, required: true },
     ticketCode: { type: String, unique: true, required: true },
     movie: { type: mongoose.Schema.Types.ObjectId, required: true },
     screen: { type: mongoose.Schema.Types.ObjectId, required: true },

@@ -65,12 +65,13 @@ const refreshToken = async (req, res) => {
 
 //đổi pass
 const changePassword = async (req, res) => {
-    const { currentPassword, newPassword } = res.body;
+    const { currentPassword, newPassword } = req.body; // Fix typo
     try {
+        console.log(req.user);
         const result = await changeUserPassword(req.user.id, currentPassword, newPassword);
-        res.json({ success: true, message: "đổi pass thành công" });
+        res.json({ success: true, message: "Đổi mật khẩu thành công" });
     } catch (error) {
-        res.status(500).json({ success: false, message: "Lỗi rồi" });
+        res.status(400).json({ success: false, message: error.message }); // Trả về error message cụ thể
     }
 };
 
